@@ -1,0 +1,62 @@
+function y=Bn(n,rho1,rho2,rho3,a,b,omega,c1,cl2,ct2,c3)
+%求导
+syms x1 x2 x3
+dbesselj=matlabFunction(diff(besselj(n,x1),x1));
+dbessely=matlabFunction(diff(bessely(n,x2),x2));
+%计算相应的波数
+k1=omega/c1;
+k_l2=omega/cl2;
+k_t2=omega/ct2;
+k3=omega/c3;
+%第一行的元素
+d11=-(rho1/rho2)*((k_t2)*a)^2*besselj(n,k1*a);
+d12=(2*n^2-(k_t2*a)^2)*besselj(n,k_l2*a)-2*(k_l2)*a*dbesselj(k_l2*a);
+d13=(2*n^2-(k_t2*a)^2)*bessely(n,k_l2*a)-2*(k_l2)*a*dbessely(k_l2*a);
+d14=2*n*(k_t2*a*dbesselj(k_t2*a)-besselj(n,k_t2*a));
+d15=2*n*(k_t2*a*dbessely(k_t2*a)-bessely(n,k_t2*a));
+d16=0;
+%第二行的元素
+d21=k1*a*dbesselj(k1*a);
+d22=k_l2*a*dbesselj(k_l2*a);
+d23=k_l2*a*dbessely(k_l2*a);
+d24=n*besselj(n,k_t2*a);
+d25=n*bessely(n,k_t2*a);
+d26=0;
+%第三行的元素
+d31=0;
+d32=2*n*(besselj(n,k_l2*a)-k_l2*a*dbesselj(k_l2*a));
+d33=2*n*(bessely(n,k_l2*a)-k_l2*a*dbessely(k_l2*a));
+d34=((k_t2*a)^2-2*n^2)*besselj(n,k_t2*a)+2*k_t2*a*dbesselj(k_t2*a);
+d35=((k_t2*a)^2-2*n^2)*bessely(n,k_t2*a)+2*k_t2*a*dbessely(k_t2*a);
+d36=0;
+%第四行的元素
+d41=0;
+d42=(2*n^2-(k_t2*b)^2)*besselj(n,k_l2*b)-2*(k_l2)*b*dbesselj(k_l2*b);
+d43=(2*n^2-(k_t2*b)^2)*bessely(n,k_l2*b)-2*(k_l2)*b*dbessely(k_l2*b);
+d44=2*n*(k_t2*b*dbesselj(k_t2*b)-besselj(n,k_t2*b));
+d45=2*n*(k_t2*b*dbessely(k_t2*b)-bessely(n,k_t2*b));
+d46=(rho3/rho2)*(k_t2*b)^2*besselj(n,k3*b);
+%第五行的元素
+d51=0;
+d52=k_l2*b*dbesselj(k_l2*b);
+d53=k_l2*b*dbessely(k_l2*b);
+d54=n*besselj(n,k_t2*b);
+d55=n*bessely(n,k_t2*b);
+d56=-k3*b*dbesselj(k3*b);
+%第六行的元素
+d61=0;
+d62=2*n*(besselj(n,k_l2*b)-k_l2*b*dbesselj(k_l2*b));
+d63=2*n*(bessely(n,k_l2*b)-k_l2*b*dbessely(k_l2*b));
+d64=((k_t2*b)^2-2*n^2)*besselj(n,k_t2*b)+2*k_t2*b*dbesselj(k_t2*b);
+d65=((k_t2*b)^2-2*n^2)*bessely(n,k_t2*b)+2*k_t2*b*dbessely(k_t2*b);
+d66=0;
+%行列式
+B=[d11,d12,d13,d14,d15,d16
+   d21,d22,d23,d24,d25,d26
+   d31,d32,d33,d34,d35,d36
+   d41,d42,d43,d44,d45,d46
+   d51,d52,d53,d54,d55,d56
+   d61,d62,d63,d64,d65,d66];
+y=det(B);
+end
+

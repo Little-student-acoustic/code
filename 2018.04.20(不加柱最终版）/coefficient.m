@@ -1,0 +1,67 @@
+function y=coefficient(n,rho1,rho2,rho3,a,b,omega,c1,cl2,ct2,c3)
+%求导
+i=sqrt(-1);
+syms x1 x2 x3
+dbesselj=matlabFunction(diff(besselj(n,x1),x1));
+dbessely=matlabFunction(diff(bessely(n,x2),x2));
+dbesselh=matlabFunction(diff(besselj(n,x3)+i*bessely(n,x3),x3));
+%计算相应的波数
+k1=omega/c1;
+k_l2=omega/cl2;
+k_t2=omega/ct2;
+k3=omega/c3;
+%第一行的元素
+d11=(rho1/rho2)*((k_t2)*a).^2.*besselh(n,1,k1*a);
+d12=(2*n^2-(k_t2*a).^2).*besselj(n,k_l2*a)-2*(k_l2)*a.*dbesselj(k_l2*a);
+d13=(2*n^2-(k_t2*a).^2).*bessely(n,k_l2*a)-2*(k_l2)*a.*dbessely(k_l2*a);
+d14=2*n*(k_t2*a.*dbesselj(k_t2*a)-besselj(n,k_t2*a));
+d15=2*n*(k_t2*a.*dbessely(k_t2*a)-bessely(n,k_t2*a));
+d16=zeros(1,length(omega));
+%第二行的元素
+d21=-k1*a.*dbesselh(k1*a);
+d22=k_l2*a.*dbesselj(k_l2*a);
+d23=k_l2*a.*dbessely(k_l2*a);
+d24=n*besselj(n,k_t2*a);
+d25=n*bessely(n,k_t2*a);
+d26=zeros(1,length(omega));
+%第三行的元素
+d31=zeros(1,length(omega));
+d32=2*n*(besselj(n,k_l2*a)-k_l2*a.*dbesselj(k_l2*a));
+d33=2*n*(bessely(n,k_l2*a)-k_l2*a.*dbessely(k_l2*a));
+d34=((k_t2*a).^2-2*n^2).*besselj(n,k_t2*a)+2*k_t2*a.*dbesselj(k_t2*a);
+d35=((k_t2*a).^2-2*n^2).*bessely(n,k_t2*a)+2*k_t2*a.*dbessely(k_t2*a);
+d36=zeros(1,length(omega));
+%第四行的元素
+d41=zeros(1,length(omega));
+d42=(2*n^2-(k_t2*b).^2).*besselj(n,k_l2*b)-2*(k_l2)*b.*dbesselj(k_l2*b);
+d43=(2*n^2-(k_t2*b).^2).*bessely(n,k_l2*b)-2*(k_l2)*b.*dbessely(k_l2*b);
+d44=2*n*(k_t2*b.*dbesselj(k_t2*b)-besselj(n,k_t2*b));
+d45=2*n*(k_t2*b.*dbessely(k_t2*b)-bessely(n,k_t2*b));
+d46=(rho3/rho2)*(k_t2*b).^2.*besselj(n,k3*b);
+%第五行的元素
+d51=zeros(1,length(omega));
+d52=k_l2*b.*dbesselj(k_l2*b);
+d53=k_l2*b.*dbessely(k_l2*b);
+d54=n*besselj(n,k_t2*b);
+d55=n*bessely(n,k_t2*b);
+d56=-k3*b.*dbesselj(k3*b);
+%第六行的元素
+d61=zeros(1,length(omega));
+d62=2*n*(besselj(n,k_l2*b)-k_l2*b.*dbesselj(k_l2*b));
+d63=2*n*(bessely(n,k_l2*b)-k_l2*b.*dbessely(k_l2*b));
+d64=((k_t2*b).^2-2*n^2).*besselj(n,k_t2*b)+2*k_t2*b.*dbesselj(k_t2*b);
+d65=((k_t2*b).^2-2*n^2).*bessely(n,k_t2*b)+2*k_t2*b.*dbessely(k_t2*b);
+d66=zeros(1,length(omega));
+%行列式
+y=zeros(length(omega),1);
+for i=1:length(omega)
+    D=[d11(i),d12(i),d13(i),d14(i),d15(i),d16(i)
+       d21(i),d22(i),d23(i),d24(i),d25(i),d26(i)
+       d31(i),d32(i),d33(i),d34(i),d35(i),d36(i)
+       d41(i),d42(i),d43(i),d44(i),d45(i),d46(i)
+       d51(i),d52(i),d53(i),d54(i),d55(i),d56(i)
+       d61(i),d62(i),d63(i),d64(i),d65(i),d66(i)];
+    y(i)=imag(det(D));
+end
+end
+
